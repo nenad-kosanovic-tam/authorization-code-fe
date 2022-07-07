@@ -6,7 +6,7 @@ export class Login extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {token: ""}
+        this.state = {token: "", users: ""}
     }
 
     parseJwt(token) {
@@ -19,13 +19,21 @@ export class Login extends React.Component {
         return jsonPayload;
     }
 
+    getUsers(token) {
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'bearer ' + token
+        };
+
+        axios.get('https://127.0.0.1:8443/resources/users',
+            {headers})
+            .then(response => this.setState({users: JSON.stringify(response)}))
+    }
+
     getToken(code) {
         const headers = {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Authorization': 'Basic Y2QyOmNkMg==',
-            'Access-Control-Allow-Methods': 'GET, OPTIONS, POST',
-            'Access-Control-Allow-Credentials': true
+            'Authorization': 'Basic Y2QyOmNkMg=='
         };
 
         axios.post('https://127.0.0.1:8443/oauth/token?client_id=cd2&grant_type=authorization_code&redirect_uri=http://127.0.0.1:8080/login&code=' + code,
@@ -38,6 +46,7 @@ export class Login extends React.Component {
     }
 
     render() {
+
         return (
             <div>
                 <h1>Login code: {this.props.code}</h1>
@@ -46,6 +55,12 @@ export class Login extends React.Component {
                     Refresh Code
                 </button>
                 <button onClick={() => this.getToken(this.props.code)}> Get token</button>
+                {this.state.token ?
+                    <button onClick={() => this.getUsers(JSON.parse(this.state.token).data.access_token)}> Get auth
+                        users</button> : null}
+
+                <h1>Users:</h1>
+                {this.state.users ? <ReactJson src={JSON.parse(this.state.users)} theme="monokai"/> : null}
 
                 <h1>Response:</h1>
                 {this.state.token ? <ReactJson src={JSON.parse(this.state.token)} theme="monokai"/> : null}
@@ -54,6 +69,7 @@ export class Login extends React.Component {
                 {this.state.token ?
                     <ReactJson src={JSON.parse(this.parseJwt(JSON.parse(this.state.token).data.access_token))}
                                theme="monokai"/> : null}
+
             </div>
         )
     }
