@@ -27,8 +27,12 @@ export class Login extends React.Component {
         this.state = {
             token: "",
             users: "",
-            env: localStorage.getItem('env') || localEnv
+            env: localEnv
         }
+    }
+
+    componentDidMount() {
+        this.setState({env: localStorage.getItem('env') || localEnv})
     }
 
     parseJwt(token) {
