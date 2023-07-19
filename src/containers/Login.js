@@ -2,23 +2,8 @@ import React from 'react';
 import axios from "axios";
 import ReactJson from "react-json-view";
 
-let localEnv = "https://localhost:8443";
-let a1Env = "https://dmt.a1.unitycms.io/auth";
-let a2Env = "https://dmt.a2.unitycms.io/auth";
-let a3Env = "https://dmt.a3.unitycms.io/auth";
-let a4Env = "https://dmt.a4.unitycms.io/auth";
-let a5Env = "https://dmt.a5.unitycms.io/auth";
-let a6Env = "https://dmt.a6.unitycms.io/auth";
-
-const envOptions = [
-    {label: 'Local', value: localEnv},
-    {label: 'a1', value: a1Env},
-    {label: 'a2', value: a2Env},
-    {label: 'a3', value: a3Env},
-    {label: 'a4', value: a4Env},
-    {label: 'a5', value: a5Env},
-    {label: 'a6', value: a6Env},
-];
+let env = "https://dev2.unitycms.io/api/auth";
+// let env = "https://localhost:8443";
 
 export class Login extends React.Component {
 
@@ -27,12 +12,12 @@ export class Login extends React.Component {
         this.state = {
             token: "",
             users: "",
-            env: localEnv
+            env: env
         }
     }
 
     componentDidMount() {
-        this.setState({env: localStorage.getItem('env') || localEnv})
+        this.setState({env: env})
     }
 
     parseJwt(token) {
@@ -71,10 +56,6 @@ export class Login extends React.Component {
         window.location.href = this.state.env + "/oauth/authorize?scope=webapp&client_id=cd2&response_type=code&redirect_uri=http://127.0.0.1:8080/login";
     }
 
-    handleEnvChange(event) {
-        localStorage.setItem('env', event.target.value)
-        this.setState({env: event.target.value})
-    }
 
     render() {
         return (
@@ -82,12 +63,7 @@ export class Login extends React.Component {
             <div>
                 <div>
                     <label>
-                        Environment:
-                        <select value={this.state.env} onChange={this.handleEnvChange.bind(this)}>
-                            {envOptions.map((option) => (
-                                <option key={option.label} value={option.value}>{option.label}</option>
-                            ))}
-                        </select>
+                        Environment: {this.state.env}
                     </label>
                 </div>
 
